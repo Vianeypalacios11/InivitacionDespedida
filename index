@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mildred & Antonio - Operación Sin Fianza</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --fbi-red: #b01c1c; --fbi-black: #0a0a0a; }
+        body { font-family: 'Courier Prime', monospace; background-color: var(--fbi-black); color: #d1d1d1; margin: 0; overflow: hidden; height: 100vh; }
+        .folder-bg { height: 100%; overflow-y: auto; scroll-behavior: smooth; background-image: radial-gradient(#1a1a1a 1px, transparent 1px); background-size: 20px 20px; }
+        .pantalla { min-height: 100vh; width: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; text-align: center; position: relative; }
+        .active { display: flex; }
+        .content-container { width: 100%; max-width: 500px; }
+        .btn-fbi { background: #1a1a1a; border: 1px solid #444; padding: 20px; width: 100%; max-width: 400px; color: white; text-transform: uppercase; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1rem; transition: 0.3s; }
+        .btn-fbi:hover { background: var(--fbi-red); transform: scale(1.02); border-color: white; }
+        .invitacion-box { background: #e2e2e2; color: #1a1a1a; padding: 40px; border: 2px solid #333; box-shadow: 15px 15px 0px rgba(0,0,0,0.5); width: 100%; }
+        .img-doc { border: 10px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.8); grayscale: 100%; }
+    </style>
+</head>
+<body>
+
+    <audio id="player" preload="auto"></audio>
+
+    <div class="folder-bg">
+        <div id="skipBtn" class="fixed bottom-8 right-8 text-xs text-zinc-500 underline z-50 cursor-pointer hidden bg-black/60 p-2" onclick="irAPantalla('resumen')">[ OMITIR HISTORIA ]</div>
+
+        <section id="p1" class="pantalla active">
+            <div class="content-container">
+                <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=500" class="w-64 h-auto img-doc rotate-2 mb-8 mx-auto grayscale">
+                <h1 class="text-2xl font-bold text-red-700 uppercase">OPERACIÓN: SIN FIANZA</h1>
+                <p class="mt-6 text-sm italic">"Todo parecía un cuento de hadas... El plan era perfecto."</p>
+                <button class="btn-fbi" onclick="irAPantalla(2)">Analizar Evidencia</button>
+            </div>
+        </section>
+
+        <section id="p2" class="pantalla">
+            <div class="content-container">
+                <div class="bg-black aspect-video mb-8 border-2 border-red-900">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/TU_ID_VIDEO" frameborder="0"></iframe>
+                </div>
+                <h2 class="text-xl font-bold text-red-600 mb-4 uppercase">El Crimen</h2>
+                <button class="btn-fbi" onclick="irAPantalla(3)">Ver Sentencia</button>
+            </div>
+        </section>
+
+        <section id="p6" class="pantalla">
+            <div class="invitacion-box !bg-white !max-w-2xl text-left">
+                <h2 class="text-xl font-bold border-b-2 border-black mb-6 text-center">FICHA DE CÓMPLICE</h2>
+                <p class="text-sm mb-2">OBJETIVO: <span class="nombreInvitado font-bold uppercase text-red-700">Cargando...</span></p>
+                <p class="text-sm mb-4">PASES DISPONIBLES: <span class="pasesInvitado font-bold">...</span></p>
+                
+                <form id="formP6" class="space-y-4">
+                    <select id="adultosP6" class="w-full border-2 border-black p-3 font-bold"></select>
+                    <input type="text" id="cancionP6" class="w-full border-2 border-black p-3 text-xs" placeholder="SUGERENCIA DJ">
+                    <button type="button" onclick="enviarRSVP('P6')" class="w-full bg-red-700 text-white py-4 font-bold uppercase">¡Confirmar Misión!</button>
+                    <button type="button" onclick="rechazar('P6')" class="w-full text-zinc-400 text-[10px] mt-2">No podré asistir</button>
+                </form>
+                <div id="statusP6" class="hidden text-center p-6 bg-black text-green-500 font-mono">REGISTRANDO EN BASE DE DATOS...</div>
+            </div>
+        </section>
+
+        <section id="resumen" class="pantalla">
+            <div class="invitacion-box !bg-[#1a1a1a] !text-white !border-red-700">
+                <h2 class="text-2xl font-bold text-red-600 mb-4">RESUMEN OPERATIVO</h2>
+                <p>📍 Lugar: Rancho Etiqueta Negra</p>
+                <p>🗓️ Fecha: 28 de Octubre, 2026</p>
+                <button class="btn-fbi" onclick="irAPantalla(6)">Ir a Confirmar</button>
+            </div>
+        </section>
+
+        <section id="pFinal" class="pantalla">
+            <div class="content-container">
+                <div class="invitacion-box !bg-black !text-white border-red-600 border-4">
+                    <h2 class="text-2xl font-bold text-red-600 mb-4">¡MISIÓN REGISTRADA!</h2>
+                    <p id="textoFinal">El prisionero está siendo trasladado. Nos vemos en la sentencia.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // --- PEGA AQUÍ TU URL DE GOOGLE ---
+        const GOOGLE_SCRIPT_URL ="https://script.google.com/macros/s/AKfycbxh61Tf5UKky24jMJGU5dPWv8a7D8Rc2Selkj9U_d0_HBL6KkGLixqNqUEn8kp0IAoxxw/exec"; 
+        
+        let nombreGlobal = "";
+
+        async function cargarDatos() {
+            const params = new URLSearchParams(window.location.search);
+            const n = params.get('n') || "Invitado_Especial";
+            
+            try {
+                const res = await fetch(`${GOOGLE_SCRIPT_URL}?n=${n}`);
+                const data = await res.json();
+                
+                nombreGlobal = data.nombre;
+                document.querySelectorAll('.nombreInvitado').forEach(el => el.innerText = data.nombre);
+                document.querySelectorAll('.pasesInvitado').forEach(el => el.innerText = data.pases);
+                
+                const sel = document.getElementById('adultosP6');
+                for(let i=0; i<=data.pases; i++) {
+                    let opt = document.createElement('option');
+                    opt.value = i; opt.innerText = i + " Persona(s)";
+                    sel.appendChild(opt);
+                }
+            } catch(e) { console.error("Error", e); }
+        }
+
+        function irAPantalla(n) {
+            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('active'));
+            const target = (typeof n === 'number') ? 'p' + n : n;
+            document.getElementById(target).classList.add('active');
+            document.getElementById('skipBtn').classList.toggle('hidden', n === 1 || n === 'pFinal');
+        }
+
+        function enviarRSVP(origen) {
+            const adultos = document.getElementById('adultos' + origen).value;
+            const cancion = document.getElementById('cancion' + origen).value;
+            
+            document.getElementById('form' + origen).classList.add('hidden');
+            document.getElementById('status' + origen).classList.remove('hidden');
+
+            fetch(`${GOOGLE_SCRIPT_URL}`, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({nombre: nombreGlobal, adultos: adultos, cancion: cancion})
+            }).then(() => {
+                irAPantalla('pFinal');
+            });
+        }
+
+        function rechazar(origen) {
+            if(confirm("¿Abortar misión?")) {
+                // Lógica de rechazo aquí
+                irAPantalla('pFinal');
+            }
+        }
+
+        window.onload = cargarDatos;
+    </script>
+</body>
+</html>
